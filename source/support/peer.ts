@@ -13,7 +13,7 @@ let peerVersion: string | undefined = undefined;
 
 const fixturesDir = process.env["RXJS_TSLINT_FIXTURES_DIR"];
 if (fixturesDir) {
-  peerDir = path.join(path.resolve(fixturesDir), "node_modules/rxjs");
+  peerDir = path.join(path.resolve(fixturesDir), "node_modules/acutmore/rxjs");
   peerVersion = require(path.join(peerDir, "package.json")).version;
 } else {
   try {
