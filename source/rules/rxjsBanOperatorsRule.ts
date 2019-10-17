@@ -62,10 +62,13 @@ class Walker extends UsedWalker {
 
   public visitImportDeclaration(node: ts.ImportDeclaration): void {
     const moduleSpecifier = node.moduleSpecifier.getText();
-
-    if (/^['"]rxjs\/operators?/.test(moduleSpecifier)) {
+    // console.log("moduleSpecifier", moduleSpecifier);
+    // '@acutmore/rxjs'
+    if ((/^['"]rxjs\/operators?/.test(moduleSpecifier)) || (/^['"]@acutmore\/rxjs?/.test(moduleSpecifier))) {
+      // console.log("   moduleSpecifier matched", moduleSpecifier);
       if (tsutils.isNamedImports(node.importClause.namedBindings)) {
         node.importClause.namedBindings.elements.forEach(binding => {
+          // console.log("      binding", binding);
           this.validateNode(binding.propertyName || binding.name);
         });
       }
@@ -94,11 +97,16 @@ class Walker extends UsedWalker {
   }
 
   private getFailure(name: string): string | undefined {
+    // console.log("name", name);
+    if (name.indexOf("do") !== -1) {
+      console.log("do---", name);
+    }
     const { _bans } = this;
     for (let b = 0, length = _bans.length; b < length; ++b) {
       const ban = _bans[b];
       if (ban.regExp.test(name)) {
         const explanation = ban.explanation ? `: ${ban.explanation}` : "";
+        console.log(" fail, ", explanation);
         return `${Rule.FAILURE_STRING}: ${name}${explanation}`;
       }
     }
