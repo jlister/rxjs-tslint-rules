@@ -64,17 +64,20 @@ class Walker extends UsedWalker {
     const moduleSpecifier = node.moduleSpecifier.getText();
     // console.log("moduleSpecifier", moduleSpecifier);
     // '@acutmore/rxjs'
-    if ((/^['"]rxjs\/operators?/.test(moduleSpecifier)) || (/^['"]@acutmore\/rxjs?/.test(moduleSpecifier))) {
+    if (/^['"]@acutmore\/rxjs?/.test(moduleSpecifier)) {
       // console.log("   moduleSpecifier matched", moduleSpecifier);
       if (tsutils.isNamedImports(node.importClause.namedBindings)) {
         node.importClause.namedBindings.elements.forEach(binding => {
           // console.log("      binding", binding);
+          if (binding.propertyName) {
+            console.log("binding.propertyName ", name);
+          }
           this.validateNode(binding.propertyName || binding.name);
         });
       }
     } else {
       const match = moduleSpecifier.match(
-        /^['"]rxjs\/add\/operator\/(\w+)['"]/
+        /^['"]@acutmore\/rxjs\/add\/operator\/(\w+)['"]/
       );
       if (match) {
         const failure = this.getFailure(match[1]);
@@ -98,9 +101,9 @@ class Walker extends UsedWalker {
 
   private getFailure(name: string): string | undefined {
     // console.log("name", name);
-    if (name.indexOf("do") !== -1) {
-      console.log("do---", name);
-    }
+    // if (name.indexOf("do") !== -1) {
+    //   console.log("do---", name);
+    // }
     const { _bans } = this;
     for (let b = 0, length = _bans.length; b < length; ++b) {
       const ban = _bans[b];
